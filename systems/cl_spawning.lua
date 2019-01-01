@@ -49,6 +49,9 @@ AddEventHandler("playerSpawned", function()
     if(_role == "officer" or _role == "warden")then
         SetPedArmour(PlayerPedId(), 100)
     end
+
+    NetworkSetFriendlyFireOption(true)
+    SetCanAttackFriendly(PlayerPedId(), true, true)
 end)
 
 Citizen.CreateThread(function()

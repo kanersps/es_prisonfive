@@ -28,12 +28,32 @@ RegisterNUICallback("select", function(data)
 end)
 
 AddEventHandler("onClientMapStart", function()
+    exports.spawnmanager:spawnPlayer({
+        x = 1476.03,
+        y = 2569.80,
+        z = 51.53,
+        model = "S_M_Y_Prisoner_01"
+    })
+
     SetNuiFocus(true, true)
     exports.spawnmanager:setAutoSpawn(false)
 end)
 
-AddEventHandler("baseevents:onPlayerDied", function()
-    TriggerServerEvent("pf_sv:requestRespawn") 
+local isDead = false
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(500)
+
+        if(IsPedFatallyInjured(PlayerPedId()) and not isDead)then
+            isDead = true
+            TriggerServerEvent("pf_sv:requestRespawn")
+        end
+    end
+end)
+
+AddEventHandler("playerSpawned", function()
+    isDead = false
 end)
 
 AddEventHandler("onClientResourceStart", function(name)

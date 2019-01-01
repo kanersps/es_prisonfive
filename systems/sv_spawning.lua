@@ -1,12 +1,13 @@
 RegisterNetEvent("pf_sv:requestRespawn")
 
-AddEventHandler("pf_sv:spawnPlayer", function(id, coords, loadout)
-    print("Received request to spawn: " .. GetPlayerName(id))
+AddEventHandler("pf_sv:spawnPlayer", function(id, coords)
     TriggerClientEvent("pf_cl:spawnPlayer", id, coords.x, coords.y, coords.z)
 end)
 
 AddEventHandler("pf_sv:requestRespawn", function()
     local _source = source
+
+    print("Received request to spawn: " .. GetPlayerName(_source))
 
     TriggerEvent("es:getPlayerFromId", _source, function(user)
         local role = user.getPrisonRole()

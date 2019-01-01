@@ -1,0 +1,92 @@
+<html>
+    <head>
+        <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+        
+            #select_role {
+                box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+
+                width: 450px;
+                padding: 5px;
+                position:absolute;
+                left: calc(50% - 225px);
+                background: rgba(255, 255, 255, 0.8);
+            }
+
+            .select_role {
+                float: left;
+                width: 225px;
+                border: none;
+                height: 30px;
+                margin: 0;
+                padding: 0;
+            }
+
+            #select_prisoner {
+                background: #ff6e40;
+            }
+
+            #select_officer {
+                color: white;
+                background: blue;
+            }
+
+            #select_warden {
+                margin-Left: 112;
+                color: white;
+                background: #304ffe;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="select_role">
+            <h1 style="text-align: center;">Welcome to PrisonFive</h1>
+
+            <p>Please select your role, your goal as a prisoner is to escape. Have fun figuring out how, please do a bit of roleplaying however.
+                <br><br>
+                The officers task is to prevent an escape from happening and they are required to listen to the warden. 
+                <br><br>
+                The warden can also do whatever he or she pleases.
+                <br><br>
+                Server Administrators can do whatever he or she pleases.</p>
+
+            <div>
+                <button class="select_role" id="select_prisoner">Prisoner</button>
+                <button class="select_role" id="select_officer">Officer</button>
+                <button class="select_role" id="select_warden">Warden</button>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById("select_prisoner").onclick = () => {
+                $.post('http://es_prisonfive/select', JSON.stringify({
+                    role: "prisoner"
+                }))
+            }
+
+            document.getElementById("select_officer").onclick = () => {
+                $.post('http://es_prisonfive/select', JSON.stringify({
+                    role: "officer"
+                }))
+            }
+
+            document.getElementById("select_warden").onclick = () => {
+                $.post('http://es_prisonfive/select', JSON.stringify({
+                    role: "warden"
+                }))
+            }
+
+            window.addEventListener('message', (event) => {
+                if(event.data.type === "pf_ui:disableRoleSelection")
+                    $("#select_role").css("display", "none");
+                if(event.data.type === "pf_ui:enableRoleSelection")
+                    $("#select_role").css("display", "block");
+            })
+        </script>
+    </body>
+</html>

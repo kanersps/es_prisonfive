@@ -11,6 +11,7 @@ files {
 }
 
 client_scripts {
+    'systems/cl_economy.lua',
     'roles/cl_selection.lua',
     'roles/cl_prisoner.lua',
     'roles/cl_warden.lua',

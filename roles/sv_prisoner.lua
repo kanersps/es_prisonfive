@@ -24,8 +24,6 @@ AddEventHandler("pf_sv:sprinting", function(sprinting, loc)
         if(user.getPrisonRole() == "prisoner")then
             escapers[_source] = sprinting
 
-            print("user trying to escape")
-
             TriggerClientEvent("pf_cl:sprinting", _source, true)
 
             if(sprinting and not resetTimers[_source])then

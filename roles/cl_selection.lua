@@ -27,16 +27,24 @@ RegisterNUICallback("select", function(data)
     TriggerServerEvent("pf_sv:selectRole", data.role)
 end)
 
-AddEventHandler("onClientMapStart", function()
-    exports.spawnmanager:spawnPlayer({
-        x = 1476.03,
-        y = 2569.80,
-        z = 51.53,
-        model = "S_M_Y_Prisoner_01"
-    })
+Citizen.CreateThread(function()
+	while true do
+		Wait(0)
 
-    SetNuiFocus(true, true)
-    exports.spawnmanager:setAutoSpawn(false)
+		if NetworkIsSessionStarted() then
+            exports.spawnmanager:spawnPlayer({
+                x = 1476.03,
+                y = 2569.80,
+                z = 51.53,
+                model = "S_M_Y_Prisoner_01"
+            })
+        
+            SetNuiFocus(true, true)
+            exports.spawnmanager:setAutoSpawn(false)
+
+			return
+		end
+	end
 end)
 
 local isDead = false

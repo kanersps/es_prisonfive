@@ -7,7 +7,8 @@ roles.prisoner = {
         {1745.51, 2624.14, 49.5},
         {1745.51, 2643.6, 49.5},
         {1727.001, 2644.57, 45.58},
-    }
+    },
+    escapeLocation = {1851.38, 2607.33, 45.65}
 }
 
 escapers = {}
@@ -15,6 +16,7 @@ resetTimers = {}
 muted = false
 
 RegisterNetEvent("pf_sv:sprinting")
+RegisterNetEvent("pf_sv:escape")
 
 AddEventHandler("pf_sv:sprinting", function(sprinting, loc)
     local _source = source
@@ -41,6 +43,38 @@ AddEventHandler("pf_sv:sprinting", function(sprinting, loc)
                     resetTimers[_source] = false
                 end)
             end
+        end
+    end)
+end)
+
+local escapeTimers = {}
+
+AddEventHandler("pf_sv:escape", function()
+    local _source = source
+
+    TriggerEvent("es:getPlayerFromId", _source, function(user)
+        if(escapeTimers[_source] == nil and user.getPrisonRole() == "prisoner")then
+            escapeTimers[_source] = true
+            
+                user.addMoney(100)
+                
+                TriggerEvent("pf_sv:spawnPlayer", _source, {
+                    x = roles["prisoner"].spawns[math.random(#roles["prisoner"].spawns)][1],
+                    y = roles["prisoner"].spawns[math.random(#roles["prisoner"].spawns)][2],
+                    z = roles["prisoner"].spawns[math.random(#roles["prisoner"].spawns)][3]
+                })
+
+                TriggerClientEvent('chat:addMessage', -1, {
+                    args = {"^1ESCAPE", " (^2" .. GetPlayerName(source) .." | "..source.."^0) " .. " has ^1ESCAPED^0! The warden needs to do a better job than this..."}
+                })                
+
+            Citizen.CreateThread(function()
+                Citizen.Wait(120000)
+
+                escapeTimers[_source] = nil
+            end)
+        else
+            print("Someone is escaping really quickly: " .. GetPlayerName(_source))
         end
     end)
 end)

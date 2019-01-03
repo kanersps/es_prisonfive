@@ -40,6 +40,52 @@
                 color: white;
                 background: #304ffe;
             }
+
+            #prisoner_shop {
+                width: 400px;
+                background: #cfd8dc;
+
+                margin: 0;
+                position: absolute;
+
+                left: calc(50% - 200px);
+                top: 30px;
+            }
+
+            .topbar {
+                background: #37474f;
+                width: 100%;
+                padding: 0;
+            }
+
+            .item {
+                border-bottom: 1px solid black;
+            }
+
+            .item-name {
+                display: inline-block;
+                font-size: 22px;
+            }
+
+            .item-price {
+                float: right;
+                font-size: 22px;
+            }
+
+            .item-buy {
+                float: right;
+                border: none;
+            }
+
+            .item-buy button {
+                border: none;
+                height: 26px;
+                background: #90a4ae;
+            }
+
+            #prisoner_shop {
+                display: none;
+            }
         </style>
     </head>
 
@@ -62,6 +108,42 @@
             </div>
         </div>
 
+        <div id="prisoner_shop">
+            <div class="topbar">
+                <p style="margin: 0; padding: 0; color: white; font-size: 1.5em">Shop</p>
+            </div>
+
+            <div class="content">
+                <div class="item">
+                    <div class="item-name">Pistol</div>
+                    <div class="item-buy"><button onclick='buy(1)'>Purchase</button></div>
+                    <div class="item-price">60$</div>
+                </div>
+                <div class="item">
+                    <div class="item-name">Knife</div>
+                    <div class="item-buy"><button onclick='buy(2)'>Purchase</button></div>
+                    <div class="item-price">30$</div>
+                </div>
+                <div class="item">
+                    <div class="item-name">Sawed off</div>
+                    <div class="item-buy"><button onclick='buy(3)'>Purchase</button></div>
+                    <div class="item-price">200$</div>
+                </div>
+                <div class="item">
+                    <div class="item-name">Assault Rifle</div>
+                    <div class="item-buy"><button onclick='buy(4)'>Purchase</button></div>
+                    <div class="item-price">500$</div>
+                </div>
+                <div class="item">
+                    <div class="item-name">Armor</div>
+                    <div class="item-buy"><button onclick='buy(5)'>Purchase</button></div>
+                    <div class="item-price">20$</div>
+                </div>
+
+                <button onclick="disableShop()" style="width: 100%; border: none; background: #b71c1c; color: white; font-size: 20px;">Cancel</button>
+            </div>
+        </div>
+
         <script>
             document.getElementById("select_prisoner").onclick = () => {
                 $.post('http://es_prisonfive/select', JSON.stringify({
@@ -81,11 +163,25 @@
                 }))
             }
 
+            function buy(id) {
+                $.post('http://es_prisonfive/purchase', JSON.stringify({
+                    item: id
+                }))                
+            }
+
+            function disableShop() {
+                $.post('http://es_prisonfive/disableShop')                
+            }
+
             window.addEventListener('message', (event) => {
                 if(event.data.type === "pf_ui:disableRoleSelection")
                     $("#select_role").css("display", "none");
                 if(event.data.type === "pf_ui:enableRoleSelection")
                     $("#select_role").css("display", "block");
+                if(event.data.type === "pf_ui:enableShop")
+                    $("#prisoner_shop").css("display", "block")
+                if(event.data.type === "pf_ui:disableShop")
+                    $("#prisoner_shop").css("display", "none")
             })
         </script>
     </body>

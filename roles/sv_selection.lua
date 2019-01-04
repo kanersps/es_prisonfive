@@ -27,7 +27,7 @@ AddEventHandler("pf_sv:selectRole", function(role)
         if(user.getPrisonRole() == role and roles[role].limit > roles[role].current)then
             print("User already has this role. Continueing to spawn...")
 
-            TriggerClientEvent("es:activateMoney", _source, user.getMoney())
+            user.displayMoney(user.getMoney())
 
             -- Refunding the dollar it costed to select a new role
             user.addMoney(1)
@@ -59,7 +59,7 @@ AddEventHandler("pf_sv:selectRole", function(role)
                     user.setPrisonRole(role)
                     print("User added to role. Continueing to spawn...")
 
-                    TriggerClientEvent("es:activateMoney", _source, user.getMoney())
+                    user.displayMoney(user.getMoney())
 
                     if(role == "warden")then
                         currentWarden = _source

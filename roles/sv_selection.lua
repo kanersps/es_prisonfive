@@ -31,6 +31,10 @@ AddEventHandler("pf_sv:selectRole", function(role)
             end
         end
 
+        if(user.getPrisonRole() == "warden")then
+            TriggerClientEvent("pf_cl:setWarden", -1, -1)
+        end
+
         if(user.getPrisonRole() == role and roles[role].limit > roles[role].current)then
             print("User already has this role. Continueing to spawn...")
 
@@ -91,3 +95,7 @@ AddEventHandler("pf_sv:selectRole", function(role)
         end
     end)
 end)
+
+RegisterCommand("setrole", function(args)
+
+end, true)

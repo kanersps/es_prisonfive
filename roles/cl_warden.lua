@@ -16,8 +16,8 @@ end)
 
 function DrawText3D(x,y,z, text)    
     if 1 then
-        SetDrawOrigin(x, y, z+ 1.2)
-        SetTextScale(0.1, 0.3)
+        SetDrawOrigin(x, y, z)
+        SetTextScale(0.2, 0.4)
         SetTextFont(0)
         SetTextProportional(1)
         SetTextColour(100, 100, 255, 255)
@@ -38,7 +38,7 @@ Citizen.CreateThread(function()
         for id = 0, 31 do
             if (NetworkIsPlayerActive(id)) then
                 local pos = GetEntityCoords(GetPlayerPed(id))
-                if (Vdist2(pos.x, pos.y, pos.z, pPos.x, pPos.y, pPos.z) < 30.1 and GetPlayerServerId(id) == currentWarden and GetPlayerServerId(id) ~= GetPlayerServerId(PlayerId()))then
+                if (Vdist2(pos.x, pos.y, pos.z, pPos.x, pPos.y, pPos.z) < 60.1 and GetPlayerServerId(id) == currentWarden and GetPlayerServerId(id) ~= GetPlayerServerId(PlayerId()))then
                     DrawText3D(pos.x, pos.y, pos.z + 1.0, "Warden")
                 end
             end

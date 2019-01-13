@@ -58,7 +58,7 @@ Citizen.CreateThread(function()
         NetworkClearVoiceChannel()
         NetworkSetVoiceActive(1)
 
-        displayText("Schedule: " .. schedule, 1, 255, 255, 255, 255, 0.0, 0.7)
+        displayText("Schedule: " .. schedule, 1, 255, 255, 255, 255, 0.0139, 0.7777)
 
         local playersTalking = {'empty'}
         if 1 then

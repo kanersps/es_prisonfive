@@ -1,7 +1,9 @@
 loadouts.prisoner = {}
 location = "cellblock"
+schedule = "Meal time"
 
 RegisterNetEvent("pf_cl:sprinting")
+RegisterNetEvent("pf_cl:changeSchedule")
 
 local acknowledgedSprinting = false
 
@@ -11,6 +13,10 @@ end)
 
 AddEventHandler("pf_cl:setLocation", function(l)
     location = l
+end)
+
+AddEventHandler("pf_cl:changeSchedule", function(s)
+    schedule = s
 end)
 
 Citizen.CreateThread(function()

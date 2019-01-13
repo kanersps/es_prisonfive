@@ -14,17 +14,10 @@ AddEventHandler("pf_cl:setWarden", function(wid)
     Citizen.Trace("WARDEN: " .. tostring(wid) .. " <<<\n" )
 end)
 
-function DrawText3D(x,y,z, text) 
-    local onScreen,_x,_y=World3dToScreen2d(x,y,z)
-    local px,py,pz=table.unpack(GetGameplayCamCoords())
-    local dist = GetDistanceBetweenCoords(px,py,pz, x,y,z, 1)
-
-    local scale = (1/dist)*2
-    local fov = (1/GetGameplayCamFov())*100
-    local scale = scale*fov
-    
-    if onScreen then
-        SetTextScale(0.0*scale, 0.55*scale)
+function DrawText3D(x,y,z, text)    
+    if 1 then
+        SetDrawOrigin(x, y, z+ 1.2)
+        SetTextScale(0.1, 0.3)
         SetTextFont(0)
         SetTextProportional(1)
         SetTextColour(100, 100, 255, 255)
@@ -33,19 +26,19 @@ function DrawText3D(x,y,z, text)
         SetTextEntry("STRING")
         SetTextCentre(1)
         AddTextComponentString(text)
-		World3dToScreen2d(x,y,z, 0) --Added Here
-        DrawText(_x,_y)
+        DrawText(0.0, 0.0)
     end
 end
 
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
+        local pPos = GetEntityCoords(GetPlayerPed(id))
 
         for id = 0, 31 do
             if (NetworkIsPlayerActive(id)) then
                 local pos = GetEntityCoords(GetPlayerPed(id))
-                if(GetPlayerServerId(id) == currentWarden and GetPlayerServerId(id) ~= GetPlayerServerId(PlayerId()))then
+                if (Vdist2(pos.x, pos.y, pos.z, pPos.x, pPos.y, pPos.z) < 30.1 and GetPlayerServerId(id) == currentWarden and GetPlayerServerId(id) ~= GetPlayerServerId(PlayerId()))then
                     DrawText3D(pos.x, pos.y, pos.z + 1.0, "Warden")
                 end
             end

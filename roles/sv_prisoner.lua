@@ -15,6 +15,20 @@ escapers = {}
 resetTimers = {}
 muted = false
 
+schedule = {
+    {name = "Meal time", time=300000},
+    {name = "Locking up", time=120000},
+    {name = "Lockup", time=120000},
+    {name = "Shower time", time=180000},
+    {name = "Yard time", time=300000},
+    {name = "Meal time", time=300000},
+    {name = "Visitation/free time", 360000},
+    {name = "Locking up", 120000},
+    {name = "Lockup", 120000}
+}
+
+currentSchedule = 1
+
 RegisterNetEvent("pf_sv:sprinting")
 RegisterNetEvent("pf_sv:escape")
 
@@ -99,4 +113,27 @@ TriggerEvent("es:addCommand", "m", function(_source, args, user)
             })        
         end
     end)
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        currentSchedule = currentSchedule + 1
+        if not schedule[currentSchedule] then currentSchedule = 1 end
+
+        if schedule[currentSchedule].name == "Lockup" then
+            cellblockOpen = false
+            TriggerClientEvent('toggleJailDoors', -1, cellblockOpen)
+        else
+            cellblockOpen = true
+            TriggerClientEvent('toggleJailDoors', -1, cellblockOpen)
+        end
+
+        TriggerClientEvent("pf_cl:changeSchedule", -1, schedule[currentSchedule].name)
+        TriggerClientEvent('chat:addMessage', -1, {
+            args = {"^1SCHEDULE", "Changed to: ^2" .. schedule[currentSchedule].name}
+        })
+        print("[PrisonFive] New schedule: " .. schedule[currentSchedule].name)
+
+        Citizen.Wait(schedule[currentSchedule].time or 60000)
+    end
 end)

@@ -57,6 +57,9 @@ Citizen.CreateThread(function()
         NetworkSetTalkerProximity(75.01)
         NetworkClearVoiceChannel()
         NetworkSetVoiceActive(1)
+
+        displayText("Schedule: " .. schedule, 1, 255, 255, 255, 255, 0.0, 0.7)
+
         local playersTalking = {'empty'}
         if 1 then
             local count = 1

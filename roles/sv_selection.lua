@@ -49,6 +49,8 @@ AddEventHandler("pf_sv:selectRole", function(role)
             end
 
             TriggerClientEvent("pf_cl:setPlayerRole", _source, role)
+            TriggerClientEvent('toggleJailDoors', _source, cellblockOpen)
+            TriggerClientEvent("pf_cl:changeSchedule", _source, schedule[currentSchedule].name)
             TriggerEvent("pf_sv:spawnPlayer", _source, {
                 x = roles[role].spawns[math.random(#roles[role].spawns)][1],
                 y = roles[role].spawns[math.random(#roles[role].spawns)][2],
@@ -75,6 +77,8 @@ AddEventHandler("pf_sv:selectRole", function(role)
                     end
 
                     TriggerClientEvent("pf_cl:setPlayerRole", _source, role)
+                    TriggerClientEvent('toggleJailDoors', _source, cellblockOpen)
+                    TriggerClientEvent("pf_cl:changeSchedule", _source, schedule[currentSchedule].name)
                     TriggerEvent("pf_sv:spawnPlayer", _source, {
                         x = roles[role].spawns[math.random(#roles[role].spawns)][1],
                         y = roles[role].spawns[math.random(#roles[role].spawns)][2],

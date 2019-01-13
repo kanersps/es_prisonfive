@@ -24,8 +24,17 @@ AddEventHandler("pf_sv:selectRole", function(role)
     print("User wants role: " .. role)
 
     TriggerEvent("es:getPlayerFromId", _source, function(user)
+
+        if(user.getPrisonRole() ~= "menu")then
+            if(user.getPrisonRole() ~= "menu")then
+                roles[role].current = roles[role].current - 1
+            end
+        end
+
         if(user.getPrisonRole() == role and roles[role].limit > roles[role].current)then
             print("User already has this role. Continueing to spawn...")
+
+            roles[role].current = roles[role].current + 1
 
             user.displayMoney(user.getMoney())
 
@@ -52,9 +61,6 @@ AddEventHandler("pf_sv:selectRole", function(role)
                     roles[role].current = roles[role].current + 1
                     
                     -- Limiting user role joins, so we dont get 100 wardens
-                    if(user.getPrisonRole() ~= "menu")then
-                        roles[role].current = roles[role].current - 1
-                    end
 
                     user.setPrisonRole(role)
                     print("User added to role. Continueing to spawn...")

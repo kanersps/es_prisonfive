@@ -61,7 +61,10 @@ RegisterNUICallback("disableShop", function(data)
 end)
 
 RegisterNUICallback("purchase", function(data)
-    TriggerServerEvent("pf_sv:purchaseItem", data.item)
+    local playerLocation = GetEntityCoords(PlayerPedId())
+    if Vdist2(playerLocation.x, playerLocation.y, playerLocation.z, 1748.09, 2591.85, 44.56) < 5.0 then
+        TriggerServerEvent("pf_sv:purchaseItem", data.item)
+    end
 end)
 
 AddEventHandler("pf_cl:purchaseComplete", function(id)

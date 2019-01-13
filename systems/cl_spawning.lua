@@ -37,6 +37,47 @@ AddEventHandler("pf_cl:spawnPlayer", function(x, y, z)
     end
 end)
 
+-- Voice stuff, thanks Vespura
+function displayText(text, justification, red, green, blue, alpha, posx, posy)
+    SetTextFont(4)
+    SetTextWrap(0.0, 1.0)
+    SetTextScale(1.0, 0.5)
+    SetTextJustification(justification)
+    SetTextColour(red, green, blue, alpha)
+    SetTextOutline()
+
+    BeginTextCommandDisplayText("STRING") -- old: SetTextEntry()
+    AddTextComponentSubstringPlayerName(text) -- old: AddTextComponentString
+    EndTextCommandDisplayText(posx, posy) -- old: DrawText()
+end
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+        NetworkSetTalkerProximity(75.01)
+        NetworkClearVoiceChannel()
+        NetworkSetVoiceActive(1)
+        local playersTalking = {'empty'}
+        if 1 then
+            local count = 1
+            for i=0,31 do
+                if NetworkIsPlayerTalking(i) then
+                    playersTalking[count] = GetPlayerName(i)
+                    count = count + 1
+                end
+            end
+            if playersTalking[1] ~= "empty" then
+                displayText("Talking", 0, 255, 255, 255, 255, 0.2, 0.0)
+                count = 0
+                for k,v in pairs(playersTalking) do
+                    displayText("~f~" .. v, 0, 255, 255, 255, 255, 0.2, 0.025 + (0.025*(count)))
+                    count = count + 1
+                end
+            end
+        end
+    end
+end)
+
 -- Give loadout on spawn
 AddEventHandler("playerSpawned", function()
     if(loadouts[_role])then

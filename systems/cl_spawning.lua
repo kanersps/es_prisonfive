@@ -3,6 +3,7 @@ RegisterNetEvent("pf_cl:spawnPlayer")
 AddEventHandler("pf_cl:spawnPlayer", function(x, y, z)
     if (_role) then
         if (_role == "prisoner") then
+            TriggerEvent("pf_cl:setLocation", "cellblock")
             exports.spawnmanager:spawnPlayer({
                 x = x,
                 y = y,

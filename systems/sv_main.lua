@@ -10,9 +10,9 @@ TriggerEvent("es:addGroupCommand", "pinfo", "admin", function(_source, args, use
     if GetPlayerName(args[1]) then
         TriggerEvent("es:getPlayerFromId", tonumber(args[1]), function(_target)
             if(_source ~= 0)then
-                TriggerClientEvent('chat:addMessage', source, { args = {"^1PrisonFive", "^0Player info (" .. GetPlayerName(args[1]) .. ")"}})
-                TriggerClientEvent('chat:addMessage', source, { args = {"^1PrisonFive", "^0Money: " .. _target.getMoney()}})
-                TriggerClientEvent('chat:addMessage', source, { args = {"^1PrisonFive", "^0Role: " .. _target.getPrisonRole()}})
+                TriggerClientEvent('chat:addMessage', _source, { args = {"^1PrisonFive", "^0Player info (" .. GetPlayerName(args[1]) .. ")"}})
+                TriggerClientEvent('chat:addMessage', _source, { args = {"^1PrisonFive", "^0Money: " .. _target.getMoney()}})
+                TriggerClientEvent('chat:addMessage', _source, { args = {"^1PrisonFive", "^0Role: " .. _target.getPrisonRole()}})
             else
                 print("^1[PrisonFive] ^0Player info (" .. GetPlayerName(args[1]) .. ")")
                 print("^1[PrisonFive] ^0Money: " .. _target.getMoney())

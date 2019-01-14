@@ -8,12 +8,12 @@ print("es_prisonfive started")
 
 TriggerEvent("es:addGroupCommand", "pinfo", "admin", function(_source, args, user)
     if GetPlayerName(args[1]) then
-        print("[PrisonFive] Player info (" .. GetPlayerName(args[1]) .. ")")
-
         TriggerEvent("es:getPlayerFromId", tonumber(args[1]), function(_target)
-            print("\n[PrisonFive] Player info (" .. GetPlayerName(args[1]) .. ")")
-            print("\n[PrisonFive] Money: " .. user.getMoney())
-            print("\n[PrisonFive] Role: " .. user.getPrisonRole())
+            print("^1[PrisonFive] ^0Player info (" .. GetPlayerName(args[1]) .. ")")
+            print("^1[PrisonFive] ^0Money: " .. user.getMoney())
+            print("^1[PrisonFive] ^0Role: " .. user.getPrisonRole())
         end)
     end
-end)
+end, function(source, args, user)
+	TriggerClientEvent('chat:addMessage', source, { args = {"^1SYSTEM", "Insufficienct permissions!"} })
+end, {help = "Retrieves a user information", params = {{name = "userid", help = "The ID of the player"}}})

@@ -22,12 +22,14 @@ AddEventHandler("pf_sv:selectRole", function(role)
     local _source = source
 
     print("User wants role: " .. role)
+    print("User role limit: " .. roles[role].current .. "/" .. roles[role].limit)
 
     TriggerEvent("es:getPlayerFromId", _source, function(user)
 
         if(user.getPrisonRole() ~= "menu")then
-            if(user.getPrisonRole() ~= "menu")then
-                roles[role].current = roles[role].current - 1
+            roles[user.getPrisonRole()].current = roles[user.getPrisonRole()].current - 1
+            if roles[user.getPrisonRole()].current < 0 then
+                roles[user.getPrisonRole()].current = 0
             end
         end
 
@@ -60,6 +62,8 @@ AddEventHandler("pf_sv:selectRole", function(role)
                 y = roles[role].spawns[math.random(#roles[role].spawns)][2],
                 z = roles[role].spawns[math.random(#roles[role].spawns)][3]
             })
+
+            print("User role limit: " .. roles[role].current .. "/" .. roles[role].limit)
         else
             if(roles[role])then
                 if(roles[role].limit > roles[role].current)then
@@ -88,6 +92,8 @@ AddEventHandler("pf_sv:selectRole", function(role)
                         y = roles[role].spawns[math.random(#roles[role].spawns)][2],
                         z = roles[role].spawns[math.random(#roles[role].spawns)][3]
                     })
+
+                    print("User role limit: " .. roles[role].current .. "/" .. roles[role].limit)
                 else
                     print("User selected full role")
                 end

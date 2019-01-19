@@ -125,8 +125,8 @@ Citizen.CreateThread(function()
     while true do
         for p,e in pairs(cleaning)do
             if e then
-                local pos = GetEntityCoords(GetPlayerPed(GetPlayerFromServerId(user)))
-                RemoveDecalsInRange(pos.x, pos.y, pos.z, 50.01)
+                local pos = GetEntityCoords(GetPlayerPed(GetPlayerFromServerId(p)))
+                RemoveDecalsInRange(pos.x, pos.y, pos.z, 14.01)
             end
         end
 
@@ -171,7 +171,7 @@ AddEventHandler("pf_cl:playerStopJob", function(user, jid, mid, respawn)
             SetEntityCoords(mops[mid], 1000.0, 1000.0, 1000.0)
             SetObjectAsNoLongerNeeded(mops[mid])
             mops[mid] = false
-            cleaning[user] = true
+            cleaning[user] = false
             StopAnimTask(GetPlayerPed(GetPlayerFromServerId(user)), "move_mop", "idle_scrub", 1.0)
 
             print("[PrisonFive] Stopping animation for " .. GetPlayerName(GetPlayerFromServerId(user)))

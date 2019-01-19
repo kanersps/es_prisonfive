@@ -119,6 +119,20 @@ RegisterNUICallback("purchase", function(data)
 end)
 
 local mops = {}
+local cleaning = {}
+
+Citizen.CreateThread(function()
+    while true do
+        for p,e in pairs(cleaning)do
+            if e then
+                local pos = GetEntityCoords(GetPlayerPed(GetPlayerFromServerId(user)))
+                RemoveDecalsInRange(pos.x, pos.y, pos.z, 50.01)
+            end
+        end
+
+        Wait(5000)
+    end
+end)
 
 AddEventHandler("pf_cl:playerStartJob", function(user, jid, mid)
     if(user == GetPlayerServerId(PlayerId()))then
@@ -134,7 +148,7 @@ AddEventHandler("pf_cl:playerStartJob", function(user, jid, mid)
         
             mops[mid] = CreateObjectNoOffset(GetHashKey("prop_cs_mop_s"), 134.7101, -766.0931, 241.152, false, false, false)
             SetEntityRotation(mops[mid], 15.42, -2.75, 0.0, 2, 1)
-        
+            cleaning[user] = true
             while not HasAnimDictLoaded(dict) do Wait(0) end
         
             AttachEntityToEntity(mops[mid], GetPlayerPed(GetPlayerFromServerId(user)), GetPedBoneIndex(GetPlayerPed(GetPlayerFromServerId(user)), 0x68FB), 0.0, 0.0, 1.1, 180.0, 0.0, 90.0, 0, 0, 0, 0, 2, 1)
@@ -157,6 +171,7 @@ AddEventHandler("pf_cl:playerStopJob", function(user, jid, mid, respawn)
             SetEntityCoords(mops[mid], 1000.0, 1000.0, 1000.0)
             SetObjectAsNoLongerNeeded(mops[mid])
             mops[mid] = false
+            cleaning[user] = true
             StopAnimTask(GetPlayerPed(GetPlayerFromServerId(user)), "move_mop", "idle_scrub", 1.0)
 
             print("[PrisonFive] Stopping animation for " .. GetPlayerName(GetPlayerFromServerId(user)))

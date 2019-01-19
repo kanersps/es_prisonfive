@@ -147,7 +147,7 @@ Citizen.CreateThread(function()
         
                     local payout = math.floor(jobs[curJobs[pl]].paycheck * (worked / 10))
         
-                    TriggerClientEvent("pf_cl:stopJob", pl)
+                    TriggerClientEvent("pf_cl:playerStopJob", -1, pl, curJobs[pl], mops[pl])
                     TriggerEvent("es:getPlayerFromId", pl, function(user)
                         user.addMoney(payout)
                         TriggerClientEvent('chat:addMessage', pl, {

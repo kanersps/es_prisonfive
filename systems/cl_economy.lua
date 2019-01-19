@@ -1,6 +1,8 @@
 RegisterNetEvent("pf_cl:purchaseComplete")
 RegisterNetEvent("pf_cl:startJob")
 RegisterNetEvent("pf_cl:stopJob")
+RegisterNetEvent("pf_cl:playerStartJob")
+RegisterNetEvent("pf_cl:playerStopJob")
 
 local doingJob = false
 
@@ -8,7 +10,16 @@ local jobs = {
     {
         name = "Food server",
         location = {x = 1743.09, y = 2579.12, z = 44.46},
-        paycheck = 10
+    },
+    {
+        name = "Cleaner",
+        location = {x = 1735.16, y = 2629.56, z = 44.56},
+        anim = "clean"
+    },
+    {
+        name = "Cleaner",
+        location = {x = 1740.16, y = 2645.19, z = 44.56},
+        anim = "clean"
     }
 }
 
@@ -81,15 +92,14 @@ Citizen.CreateThread(function()
         end
 
         if doingJob then
-            FreezeEntityPosition(PlayerPedId(), true)
-
             DisplayHelpText("Press ~INPUT_CONTEXT~ to stop working")
             if(IsControlJustReleased(1, 51))then
                 TriggerServerEvent("pf_sv:stopJob")
+            end
 
-                FreezeEntityPosition(PlayerPedId(), false)
-                doingJob = false
-            end            
+            if IsPedRagdoll(PlayerPedId()) then
+                TriggerServerEvent("pf_sv:stopJob")
+            end
         end
     end
 end)
@@ -108,18 +118,55 @@ RegisterNUICallback("purchase", function(data)
     end
 end)
 
-AddEventHandler("pf_cl:startJob", function()
-    doingJob = true
+local mops = {}
+
+AddEventHandler("pf_cl:playerStartJob", function(user, jid, mid)
+    if(user == GetPlayerServerId(PlayerId()))then
+        doingJob = true
+    end
+
+    print("[PrisonFive] Starting animation for " .. GetPlayerName(GetPlayerFromServerId(user)) .. " (" ..  tostring(user) .. ") JOB: " .. tostring(jid))
+
+    if jobs[jid].anim == "clean" then
+        Citizen.CreateThread(function()
+            local dict = "move_mop"
+            RequestAnimDict(dict)
+        
+            mops[mid] = CreateObjectNoOffset(GetHashKey("prop_cs_mop_s"), 134.7101, -766.0931, 241.152, false, false, false)
+            SetEntityRotation(mops[mid], 15.42, -2.75, 0.0, 2, 1)
+        
+            while not HasAnimDictLoaded(dict) do Wait(0) end
+        
+            AttachEntityToEntity(mops[mid], GetPlayerPed(GetPlayerFromServerId(user)), GetPedBoneIndex(GetPlayerPed(GetPlayerFromServerId(user)), 0x68FB), 0.0, 0.0, 1.1, 180.0, 0.0, 90.0, 0, 0, 0, 0, 2, 1)
+        
+            print("[PrisonFive] Started animation for " .. GetPlayerName(GetPlayerFromServerId(user)) .. " (" ..  tostring(user) .. ")")
+            TaskPlayAnim(GetPlayerPed(GetPlayerFromServerId(user)), dict, "idle_scrub", 8.0, 1.0, -1, 1, 1.0, true, true, true, true)
+        end)
+    end
 end)
 
-AddEventHandler("pf_cl:stopJob", function()
-    FreezeEntityPosition(PlayerPedId(), false)
-    doingJob = false
+AddEventHandler("pf_cl:playerStopJob", function(user, jid, mid, respawn)
+    if(user == GetPlayerServerId(PlayerId()))then
+        doingJob = false
+    end
+
+        if mops[mid] and not respawn then
+            DetachEntity(mops[mid], 1, 1)
+            ClearPedTasksImmediately(GetPlayerPed(GetPlayerFromServerId(user)))
+            StopAnimPlayback(GetPlayerPed(GetPlayerFromServerId(user)), true, true)
+            SetEntityCoords(mops[mid], 1000.0, 1000.0, 1000.0)
+            SetObjectAsNoLongerNeeded(mops[mid])
+            mops[mid] = false
+            StopAnimTask(GetPlayerPed(GetPlayerFromServerId(user)), "move_mop", "idle_scrub", 1.0)
+
+            print("[PrisonFive] Stopping animation for " .. GetPlayerName(GetPlayerFromServerId(user)))
+        end
 end)
 
 AddEventHandler("pf_cl:died", function()
-    doingJob = false
-    FreezeEntityPosition(PlayerPedId(), false)
+    if doingJob then
+        TriggerServerEvent("pf_sv:stopJob", 1)
+    end
 end)
 
 AddEventHandler("pf_cl:purchaseComplete", function(id)

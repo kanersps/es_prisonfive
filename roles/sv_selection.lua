@@ -58,9 +58,9 @@ AddEventHandler("pf_sv:selectRole", function(role)
             TriggerClientEvent('toggleJailDoors', _source, cellblockOpen)
             TriggerClientEvent("pf_cl:changeSchedule", _source, schedule[currentSchedule].name)
             TriggerEvent("pf_sv:spawnPlayer", _source, {
-                x = roles[role].spawns[math.random(#roles[role].spawns)][1],
-                y = roles[role].spawns[math.random(#roles[role].spawns)][2],
-                z = roles[role].spawns[math.random(#roles[role].spawns)][3]
+                x = roles[role].spawns[math.random(#roles[role].spawns)].x,
+                y = roles[role].spawns[math.random(#roles[role].spawns)].y,
+                z = roles[role].spawns[math.random(#roles[role].spawns)].z
             })
 
             print("User role limit: " .. roles[role].current .. "/" .. roles[role].limit)
@@ -88,9 +88,9 @@ AddEventHandler("pf_sv:selectRole", function(role)
                     TriggerClientEvent('toggleJailDoors', _source, cellblockOpen)
                     TriggerClientEvent("pf_cl:changeSchedule", _source, schedule[currentSchedule].name)
                     TriggerEvent("pf_sv:spawnPlayer", _source, {
-                        x = roles[role].spawns[math.random(#roles[role].spawns)][1],
-                        y = roles[role].spawns[math.random(#roles[role].spawns)][2],
-                        z = roles[role].spawns[math.random(#roles[role].spawns)][3]
+                        x = roles[role].spawns[math.random(#roles[role].spawns)].x,
+                        y = roles[role].spawns[math.random(#roles[role].spawns)].y,
+                        z = roles[role].spawns[math.random(#roles[role].spawns)].z
                     })
 
                     print("User role limit: " .. roles[role].current .. "/" .. roles[role].limit)

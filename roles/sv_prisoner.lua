@@ -1,12 +1,22 @@
 roles.prisoner = {
     limit = 100,
     current = 0,
-    paycheck = 10,
+    paycheck = 2,
     loadout = {},
     spawns = {
-        {1745.51, 2624.14, 49.5},
-        {1745.51, 2643.6, 49.5},
-        {1727.001, 2644.57, 45.58},
+        -- Level one
+        {x = 1746.10, y = 2631.81, z = 45.08},
+        {x = 1745.90, y = 2635.56, z = 45.08},
+        {x = 1746.55, y = 2640.92, z = 45.08},
+        {x = 1745.86, y = 2644.15, z = 45.08},
+        {x = 1745.64, y = 2648.28, z = 45.08},
+        {x = 1727.42, y = 2648.71, z = 45.08},
+        {x = 1727.66, y = 2644.56, z = 45.08},
+        {x = 1727.10, y = 2640.24, z = 45.08},
+        {x = 1727.77, y = 2636.23, z = 45.08},
+        {x = 1727.62, y = 2632.22, z = 45.08},
+        {x = 1727.50, y = 2628.01, z = 45.08},
+        {x = 1726.56, y = 2623.95, z = 45.08},
     },
     escapeLocation = {1851.38, 2607.33, 45.65}
 }
@@ -17,12 +27,15 @@ muted = false
 
 schedule = {
     {name = "Meal time", time=300000},
+    {name = "Work/free time", time=80000},
     {name = "Locking up", time=120000},
     {name = "Lockup", time=120000},
-    {name = "Shower time", time=180000},
+    {name = "Work/free time", time=80000},
+    {name = "Shower time", time=120000},
     {name = "Yard time", time=300000},
     {name = "Meal time", time=300000},
     {name = "Visitation/free time", 360000},
+    {name = "Work/free time", time=80000},
     {name = "Locking up", 120000},
     {name = "Lockup", 120000}
 }
@@ -73,9 +86,9 @@ AddEventHandler("pf_sv:escape", function()
                 user.addMoney(100)
                 
                 TriggerEvent("pf_sv:spawnPlayer", _source, {
-                    x = roles["prisoner"].spawns[math.random(#roles["prisoner"].spawns)][1],
-                    y = roles["prisoner"].spawns[math.random(#roles["prisoner"].spawns)][2],
-                    z = roles["prisoner"].spawns[math.random(#roles["prisoner"].spawns)][3]
+                    x = roles["prisoner"].spawns[math.random(#roles["prisoner"].spawns)].x,
+                    y = roles["prisoner"].spawns[math.random(#roles["prisoner"].spawns)].y,
+                    z = roles["prisoner"].spawns[math.random(#roles["prisoner"].spawns)].z
                 })
 
                 TriggerClientEvent('chat:addMessage', -1, {
@@ -120,6 +133,33 @@ Citizen.CreateThread(function()
         currentSchedule = currentSchedule + 1
         if not schedule[currentSchedule] then currentSchedule = 1 end
 
+        if schedule[currentSchedule].name == "Work/free time" then
+            if jobs then
+                for _,job in pairs(jobs)do
+                    job.occupied = false
+                end
+            end
+        else
+            for pl,job in pairs(curJobs)do
+                if(job)then
+                    local worked = os.time() - workStarted[pl]
+                    print("[PrisonFive] User " .. GetPlayerName(pl) .. " worked for " .. worked)
+        
+                    local payout = math.floor(jobs[curJobs[pl]].paycheck * (worked / 10))
+        
+                    TriggerClientEvent("pf_cl:stopJob", pl)
+                    TriggerEvent("es:getPlayerFromId", pl, function(user)
+                        user.addMoney(payout)
+                        TriggerClientEvent('chat:addMessage', pl, {
+                            args = {"^1PrisonFive", "^0You finished your job and earned ^3$" .. payout}
+                        })
+                    end)
+                end
+            end
+
+            curJobs = {}
+        end
+
         if schedule[currentSchedule].name == "Lockup" then
             cellblockOpen = false
             TriggerClientEvent('toggleJailDoors', -1, cellblockOpen)
@@ -137,3 +177,16 @@ Citizen.CreateThread(function()
         Citizen.Wait(schedule[currentSchedule].time or 60000)
     end
 end)
+
+function round2(num, numDecimalPlaces)
+    return string.format("%." .. (numDecimalPlaces or 0) .. "f", num)
+  end
+
+
+  --[[
+RegisterNetEvent("savepos")
+AddEventHandler("savepos", function(x, y, z)
+    local curData = LoadResourceFile("es_prisonfive", "positions.txt") or ""
+    curData = curData .. "{x = " .. round2(x, 2) .. ", y = " .. round2(y, 2) .. ", z = " .. round2(z, 2) .. "},\n"
+    SaveResourceFile("es_prisonfive", "positions.txt", curData, -1)
+end)]]

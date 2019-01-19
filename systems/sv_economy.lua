@@ -1,4 +1,6 @@
 RegisterNetEvent("pf_sv:purchaseItem")
+RegisterNetEvent("pf_sv:startJob")
+RegisterNetEvent("pf_sv:stopJob")
 
 -- Payments
 Citizen.CreateThread(function()
@@ -24,6 +26,56 @@ TriggerEvent("es:addCommand", "role", function(_source, args, user)
     user.removeMoney(1)
 
     TriggerClientEvent("pf_cl:selectNewRole", _source)
+end)
+
+jobs = {
+    {
+        name = "Food server",
+        location = {x = 1743.09, y = 2579.12, z = 44.46},
+        paycheck = 4,
+        occupied = false
+    }
+}
+
+curJobs = {}
+workStarted = {}
+
+AddEventHandler("pf_sv:startJob", function(job)
+    local _source = source
+
+    if schedule[currentSchedule].name == "Work/free time" then
+        if (jobs[job] and jobs[job].occupied == false) then
+            jobs[job].occupied = true
+            workStarted[_source] = os.time()
+            curJobs[_source] = job
+            TriggerClientEvent('pf_cl:startJob', job)
+        else
+            TriggerClientEvent('chat:addMessage', _source, { args = {"^1PrisonFive", "^0Can't work here for this period"}})
+        end
+    end
+end)
+
+AddEventHandler("pf_sv:stopJob", function()
+    local _source = source
+    if(curJobs[_source])then
+        if(jobs[curJobs[_source]])then
+            jobs[curJobs[_source]].occupied = false
+
+            local worked = os.time() - workStarted[_source]
+            print("[PrisonFive] User " .. GetPlayerName(_source) .. " worked for " .. worked)
+
+            local payout = math.floor(jobs[curJobs[_source]].paycheck * (worked / 10))
+
+            TriggerEvent("es:getPlayerFromId", _source, function(user)
+                user.addMoney(payout)
+                TriggerClientEvent('chat:addMessage', _source, {
+                    args = {"^1PrisonFive", "^0You finished your job and earned ^3$" .. payout}
+                })
+            end)
+        end
+
+        curJobs[_source] = nil
+    end
 end)
 
 -- Purchasing items

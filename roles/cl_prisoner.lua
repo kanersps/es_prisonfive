@@ -19,6 +19,12 @@ AddEventHandler("pf_cl:changeSchedule", function(s)
     schedule = s
 end)
 
+--[[
+RegisterCommand("add", function()
+    local pLocation = GetEntityCoords(PlayerPedId())
+    TriggerServerEvent("savepos", pLocation.x, pLocation.y, pLocation.z - 0.5)    
+end)]]
+
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(500)

@@ -55,6 +55,7 @@ Citizen.CreateThread(function()
 
         if(IsPedFatallyInjured(PlayerPedId()) and not isDead)then
             isDead = true
+            TriggerEvent("pf_cl:died")
             TriggerServerEvent("pf_sv:requestRespawn")
         end
     end

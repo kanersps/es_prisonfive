@@ -9,7 +9,7 @@ roles.officer = {
         0x678B81B1, -- WEAPON_NIGHTSTICK
     },
     spawns = {
-        {1731.01, 2570.6, 49.65}
+        {x = 1731.01, y = 2570.6, z = 49.65}
     }
 }
 

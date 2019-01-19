@@ -1,4 +1,16 @@
 RegisterNetEvent("pf_cl:purchaseComplete")
+RegisterNetEvent("pf_cl:startJob")
+RegisterNetEvent("pf_cl:stopJob")
+
+local doingJob = false
+
+local jobs = {
+    {
+        name = "Food server",
+        location = {x = 1743.09, y = 2579.12, z = 44.46},
+        paycheck = 10
+    }
+}
 
 function DisplayHelpText(str)
 	SetTextComponentFormat("STRING")
@@ -50,6 +62,35 @@ Citizen.CreateThread(function()
                 DisplayHelpText("Get away from me, you pig!")
             end
         end
+
+        if schedule == "Work/free time" and not doingJob then
+            for jid,v in pairs(jobs)do
+                DrawMarker(1, v.location.x, v.location.y, v.location.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 2.0, 0, 0, 255, 150, false, 2, false, nil, nil, true)
+                if Vdist2(playerLocation.x, playerLocation.y, playerLocation.z, v.location.x, v.location.y, v.location.z) < 3.0 then
+                    if(_role == "prisoner")then
+                        DisplayHelpText("Press ~INPUT_CONTEXT~ to start working")
+
+                        if(IsControlJustReleased(1, 51))then
+                            TriggerServerEvent("pf_sv:startJob", jid)
+                        end
+                    else
+                        DisplayHelpText("Only prisoners can work")
+                    end
+                end
+            end
+        end
+
+        if doingJob then
+            FreezeEntityPosition(PlayerPedId(), true)
+
+            DisplayHelpText("Press ~INPUT_CONTEXT~ to stop working")
+            if(IsControlJustReleased(1, 51))then
+                TriggerServerEvent("pf_sv:stopJob")
+
+                FreezeEntityPosition(PlayerPedId(), false)
+                doingJob = false
+            end            
+        end
     end
 end)
 
@@ -65,6 +106,20 @@ RegisterNUICallback("purchase", function(data)
     if Vdist2(playerLocation.x, playerLocation.y, playerLocation.z, 1748.09, 2591.85, 44.56) < 5.0 then
         TriggerServerEvent("pf_sv:purchaseItem", data.item)
     end
+end)
+
+AddEventHandler("pf_cl:startJob", function()
+    doingJob = true
+end)
+
+AddEventHandler("pf_cl:stopJob", function()
+    FreezeEntityPosition(PlayerPedId(), false)
+    doingJob = false
+end)
+
+AddEventHandler("pf_cl:died", function()
+    doingJob = false
+    FreezeEntityPosition(PlayerPedId(), false)
 end)
 
 AddEventHandler("pf_cl:purchaseComplete", function(id)

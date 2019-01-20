@@ -134,7 +134,7 @@ local lesterSpoken = false
 RegisterNetEvent("pf_sv:speakToLester")
 AddEventHandler("pf_sv:speakToLester", function()
     if not lesterSpoken then
-        if math.random() * 100 < 100 then
+        if math.random() * 100 < 40 then
             TriggerClientEvent('chat:addMessage', source, {
                 args = {"^1LESTER", "I'll help you get out of here... Go to the yard in about 5 to 10 minutes, you'll see what I mean..."}
             })

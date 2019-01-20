@@ -28,6 +28,7 @@ muted = false
 schedule = {
     {name = "Meal time", time=300000},
     {name = "Work/free time", time=80000},
+    {name = "Visitation/free time", 60000},
     {name = "Locking up", time=120000},
     {name = "Lockup", time=120000},
     {name = "Work/free time", time=80000},
@@ -128,6 +129,39 @@ TriggerEvent("es:addCommand", "m", function(_source, args, user)
     end)
 end)
 
+local lesterSpoken = false
+
+RegisterNetEvent("pf_sv:speakToLester")
+AddEventHandler("pf_sv:speakToLester", function()
+    if not lesterSpoken then
+        if math.random() * 100 < 100 then
+            TriggerClientEvent('chat:addMessage', source, {
+                args = {"^1LESTER", "I'll help you get out of here... Go to the yard in about 5 to 10 minutes, you'll see what I mean..."}
+            })
+
+            Citizen.CreateThread(function()
+                Citizen.Wait(30000)
+                TriggerClientEvent("pf_cl:escapePossible", -1, true)
+                Wait(10000)
+                TriggerClientEvent("pf_cl:escapePossible", -1, false)
+                TriggerClientEvent('chat:addMessage', -1, {
+                    args = {"^1[PrisonFive]", "The fence was repaired"}
+                })
+            end)
+        else
+            TriggerClientEvent('chat:addMessage', source, {
+                args = {"^1LESTER", "I'll help you get out of here... Not now, but soon, I promise."}
+            })
+        end
+
+        lesterSpoken = true
+    else
+        TriggerClientEvent('chat:addMessage', source, {
+            args = {"^1LESTER", "I've spoken to who I came for already"}
+        })        
+    end
+end)
+
 Citizen.CreateThread(function()
     while true do
         currentSchedule = currentSchedule + 1
@@ -166,6 +200,13 @@ Citizen.CreateThread(function()
         else
             cellblockOpen = true
             TriggerClientEvent('toggleJailDoors', -1, cellblockOpen)
+        end
+
+        if schedule[currentSchedule].name == "Visitation/free time" then
+            TriggerClientEvent("pf_cl:visitationLester", -1)
+        else
+            lesterSpoken = false
+            TriggerClientEvent("pf_cl:visitationLesterRemove", -1)
         end
 
         TriggerClientEvent("pf_cl:changeSchedule", -1, schedule[currentSchedule].name)

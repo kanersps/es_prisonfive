@@ -84,6 +84,56 @@ end)
 local explosionEscape = false
 local lester
 local lesterHere = false
+local escapeVeh
+
+function addEscapeVehicle()
+    Citizen.CreateThread(function()
+        RequestModel(GetHashKey("burrito3"))
+
+        Citizen.Trace("Loading van model...")
+        while not HasModelLoaded(GetHashKey("burrito3")) do Wait(0) end
+        Citizen.Trace("Loaded van model!")
+
+        escapeVeh = CreateVehicle(GetHashKey("burrito3"), 1603.8, 2519.04, 44.56, 120.0, false, false)
+        SetVehicleColours(escapeVeh, 12, 12)
+        FreezeEntityPosition(escapeVeh, true)
+        SetEntityInvincible(escapeVeh, true)
+        SetVehicleDoorOpen(escapeVeh, 2, false, false)
+        SetVehicleDoorOpen(escapeVeh, 3, false, false)
+        SetVehicleDoorsLocked(escapeVeh, 2)
+    end)
+end
+
+Citizen.CreateThread(function()
+    while true do
+        Wait(0)
+
+        if explosionEscape then
+            DrawMarker(1, 1607.11, 2520.82, 44.56, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 1.8, 1.5, 255, 0, 0, 150, false, 2, false, nil, nil, true)
+        
+            local playerLocation = GetEntityCoords(PlayerPedId())
+
+            if Vdist2(playerLocation.x, playerLocation.y, playerLocation.z, 1607.11, 2520.82, 44.56) < 3.0 then
+                if(true)then
+                    DisplayHelpText("Press ~INPUT_CONTEXT~ to escape")
+
+                    if(IsControlJustReleased(1, 51))then
+                        TriggerServerEvent("pf_sv:escape")
+                    end
+                else
+                    DisplayHelpText("Only prisoners can use this")
+                end
+            end
+        end
+    end
+end)
+
+function removeEscapeVehicle()
+    if escapeVeh then
+        SetEntityAsNoLongerNeeded(escapeVeh)
+        SetEntityCoords(escapeVeh, 1000.0, 1000.0, 1000.0)
+    end
+end
 
 function addLester()
     lesterHere = true
@@ -135,9 +185,21 @@ end)
 
 AddEventHandler("pf_cl:escapePossible", function(possible)
     if possible then
+        addEscapeVehicle()
         AddExplosion(1616.33, 2524.32, 45.56 + 1.0, 29, 10.0, true, false, true)
+    else
+        removeEscapeVehicle()
     end
     explosionEscape = possible
+end)
+
+-- Keep prison gates locked
+Citizen.CreateThread(function()
+    while true do
+        local d1 = GetClosestObjectOfType(1844.998, 2604.810, 44.638, 1.0, GetHashKey("prop_gate_prison_01"), false, false, false)
+        FreezeEntityPosition(d1, true)
+        Wait(500)
+    end
 end)
 
 Citizen.CreateThread(function()

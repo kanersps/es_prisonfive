@@ -102,7 +102,7 @@ AddEventHandler("pf_sv:escape", function()
                 escapeTimers[_source] = nil
             end)
         else
-            print("Someone is escaping really quickly: " .. GetPlayerName(_source))
+            print("[PrisonFive] Someone is escaping really quickly: " .. GetPlayerName(_source))
         end
     end)
 end)
@@ -140,9 +140,9 @@ AddEventHandler("pf_sv:speakToLester", function()
             })
 
             Citizen.CreateThread(function()
-                Citizen.Wait(30000)
+                Citizen.Wait(60000 * 6)
                 TriggerClientEvent("pf_cl:escapePossible", -1, true)
-                Wait(10000)
+                Wait(60000 * 3)
                 TriggerClientEvent("pf_cl:escapePossible", -1, false)
                 TriggerClientEvent('chat:addMessage', -1, {
                     args = {"^1[PrisonFive]", "The fence was repaired"}

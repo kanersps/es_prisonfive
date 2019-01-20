@@ -46,35 +46,6 @@ currentSchedule = 1
 RegisterNetEvent("pf_sv:sprinting")
 RegisterNetEvent("pf_sv:escape")
 
-AddEventHandler("pf_sv:sprinting", function(sprinting, loc)
-    local _source = source
-    local location = loc or "unknown"
-
-    TriggerEvent("es:getPlayerFromId", _source, function(user)
-        if(user.getPrisonRole() == "prisoner")then
-            escapers[_source] = sprinting
-
-            TriggerClientEvent("pf_cl:sprinting", _source, true)
-
-            if(sprinting and not resetTimers[_source])then
-                resetTimers[_source] = true
-
-                if not muted then
-                    TriggerClientEvent('chat:addMessage', -1, {
-                        args = {"^1ESCAPING", " (^2" .. GetPlayerName(_source) .." | ".._source.."^0) " .. " is attempting to escape! Location: ^3" .. location}
-                    })
-                end
-
-                Citizen.CreateThread(function()               
-                    Citizen.Wait(5000)
-                    TriggerClientEvent("pf_cl:sprinting", _source, false)
-                    resetTimers[_source] = false
-                end)
-            end
-        end
-    end)
-end)
-
 local escapeTimers = {}
 
 AddEventHandler("pf_sv:escape", function()

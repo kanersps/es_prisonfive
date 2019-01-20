@@ -142,7 +142,11 @@ AddEventHandler("pf_sv:speakToLester", function()
             Citizen.CreateThread(function()
                 Citizen.Wait(60000 * 6)
                 TriggerClientEvent("pf_cl:escapePossible", -1, true)
-                Wait(60000 * 3)
+                Citizen.Wait(6000)
+                TriggerClientEvent('chat:addMessage', -1, {
+                    args = {"^1[PrisonFive]", "The fence was blown to pieces, don't let prisoners escape!"}
+                })
+                Citizen.Wait(60000 * 3)
                 TriggerClientEvent("pf_cl:escapePossible", -1, false)
                 TriggerClientEvent('chat:addMessage', -1, {
                     args = {"^1[PrisonFive]", "The fence was repaired"}

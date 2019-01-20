@@ -202,7 +202,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         if explosionEscape then
-            AddExplosion(1616.33, 2524.32, 45.56 + 3.5, 1, 0.1, false, true, false)
+            AddExplosion(1616.33, 2524.32, 45.56 + 2.5, 1, 0.1, false, true, false)
         end
 
         Wait(1000)
